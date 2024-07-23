@@ -3,6 +3,7 @@ from src.client_locator import EC2Client
 
 from src.ec2.ec2 import EC2
 
+
 def main():
     # Create a VPC
     ec2_client = EC2Client().get_client()
@@ -47,7 +48,7 @@ def main():
     vpc.allow_auto_assign_ip_addresses_to_subnet(public_subnet_id)
 
     # Create a private subnet
-    private_subnet_response = vpc.create_subnet(vpc_id, '10.0.2.0/24')
+    private_subnet_response = vpc.create_subnet('vpc-0904f3b7b6379a257', '10.0.2.0/24')
     private_subnet_id = private_subnet_response['Subnet']['SubnetId']
     print('Created private subnet ' + private_subnet_id + ' for VPC: ' + vpc_id)
 
@@ -60,7 +61,7 @@ def main():
     ec2 = EC2(ec2_client)
 
     # Create key pair
-    key_pair_name = 'Boto3-KeyPair'
+    key_pair_name = 'Boto3-KeyPair-Test'
     key_pair_response = ec2.create_key_pair(key_pair_name)
     print('Created Key Pair with name: ' + key_pair_name + ': ' + str(key_pair_response))
 
@@ -89,8 +90,44 @@ def main():
     ec2.launch_ec2_instance(
         'ami-071878317c449ae48', key_pair_name, 1, 1,
         public_security_group_id, public_subnet_id, user_data)
-    print('Launching Public EC2 instance with AMI: ami-071878317c449ae48')
+    # print('Launching Public EC2 instance with AMI: ami-071878317c449ae48')
+
+
+def describe_instances():
+    ec2_client = EC2Client().get_client()
+    ec2 = EC2(ec2_client)
+    ec2_response = ec2.describe_ec2_instances()
+    print(str(ec2_response))
+
+
+def modify_instance():
+    ec2_client = EC2Client().get_client()
+    ec2 = EC2(ec2_client)
+    ec2.modify_ec2_instances('i-0f51d4a0e0140c2e7')
+
+
+def stop_instance():
+    ec2_client = EC2Client().get_client()
+    ec2 = EC2(ec2_client)
+    ec2.stop_instance('i-0f51d4a0e0140c2e7')
+
+
+def start_instance():
+    ec2_client = EC2Client().get_client()
+    ec2 = EC2(ec2_client)
+    ec2.start_instance('i-0f51d4a0e0140c2e7')
+
+
+def terminate_instance():
+    ec2_client = EC2Client().get_client()
+    ec2 = EC2(ec2_client)
+    ec2.terminate_instance('i-0f51d4a0e0140c2e7')
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    # describe_instances()
+    modify_instance()
+    # stop_instance()
+    # start_instance()
+    terminate_instance()

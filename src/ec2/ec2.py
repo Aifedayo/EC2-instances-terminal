@@ -39,7 +39,7 @@ class EC2:
 
     def launch_ec2_instance(
             self, image_id, key_name, min_count, max_count, security_group_id, subnet_id, user_data):
-        print('Launching ' + min_count + ' EC2 Instance(s) within Subnet ' + subnet_id)
+        # print('Launching ' + min_count + ' EC2 Instance(s) within Subnet ' + subnet_id)
         return self._client.run_instances(
             ImageId=image_id,
             KeyName=key_name,
@@ -50,3 +50,28 @@ class EC2:
             SubnetId=subnet_id,
             UserData=user_data
         )
+
+    def describe_ec2_instances(self):
+        print('Describing EC2 instances...')
+        return self._client.describe_instances()
+
+    def modify_ec2_instances(self, instance_id):
+        print('Modifying EC2 Instance ' + instance_id)
+        return self._client.modify_instance_attribute(
+            InstanceId=instance_id,
+            DisableApiTermination={
+                'Value': False
+            }
+        )
+
+    def stop_instance(self, instance_id):
+        print('Stopping EC2 Instance ' + instance_id)
+        return self._client.stop_instances(InstanceIds=[instance_id])
+
+    def start_instance(self, instance_id):
+        print('Starting EC2 Instance ' + instance_id)
+        return self._client.start_instances(InstanceIds=[instance_id])
+
+    def terminate_instance(self, instance_id):
+        print('Terminating EC2 Instance ' + instance_id)
+        return self._client.terminate_instances(InstanceIds=[instance_id])
